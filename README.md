@@ -1,4 +1,4 @@
-# Africlimate AI
+# AfriClimate AI
 
 ![Static Badge](https://img.shields.io/badge/Climate-Change-green)
 ![Static Badge](https://img.shields.io/badge/Africa-Research-purple)
