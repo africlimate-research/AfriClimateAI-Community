@@ -16,7 +16,7 @@ Website Link:
 
 ## Mission
 
-Africlimate AI is dedicated to harnessing the power of Artificial Intelligence to address climate change challenges specific to the African continent. Our mission is to create a vibrant community of students, researchers, and professionals who collaborate, innovate, and drive forward the application of AI in climate change mitigation and adaptation strategies.
+AfriClimate AI is dedicated to harnessing the power of Artificial Intelligence to address climate change challenges specific to the African continent. Our mission is to create a vibrant community of students, researchers, and professionals who collaborate, innovate, and drive forward the application of AI in climate change mitigation and adaptation strategies.
 
 ## Guiding Principles
 
