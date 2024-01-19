@@ -52,4 +52,4 @@ AfriClimate AI is dedicated to harnessing the power of Artificial Intelligence t
 
 ## Join Us
 
-- **Slack Channel**: 
+- [**Slack Channel**](https://join.slack.com/t/africlimateai/shared_invite/zt-2b82z5qio-3GXtgF6Kdpo31ZLYZcVBeA)
