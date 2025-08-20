@@ -39,12 +39,11 @@ def plot_monthly_daily_totals(df, variable, time_col='time'):
         plt.tight_layout()
         plt.show()
 
-
-def load_imerg_from_HF(subdir = "SouthAfrica"):
+def load_imerg_from_HF(subdir = "SouthAfrica_Limpopo"):
     repo_id = "musamthembu84/imerg"
-
+    #SouthAfrica_Limpopo/3B-DAY-L.MS.MRG.3IMERG.20250331-S000000-E235959.V07B_SouthAfrica_Limpopo.nc4
     pattern = f"hf://datasets/{repo_id}/{subdir}/*.nc4"
-    files = fsspec.open_files(pattern, mode="rb")
+    files = fsspec.open_files(pattern, mode="rb",token="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")
 
 
     # Helper to split files into batches
