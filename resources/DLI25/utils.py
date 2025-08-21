@@ -39,45 +39,40 @@ def plot_monthly_daily_totals(df, variable, time_col='time'):
         plt.tight_layout()
         plt.show()
 
-def load_imerg_from_HF(subdir = "SouthAfrica_Limpopo",token=None):
+def _batch_iterable(iterable, batch_size):
+    it = iter(iterable)
+    while True:
+        batch = list(islice(it, batch_size))
+        if not batch:
+            break
+        yield batch
+
+def _open_with_fallback(f_obj):
+    """Open a file object, trying NetCDF4 first, then NetCDF3 (scipy)."""
+    try:
+        ds = xr.open_dataset(f_obj, engine="h5netcdf", decode_times=True, chunks={"time": 50})
+    except ValueError:
+        ds = xr.open_dataset(f_obj, engine="scipy", decode_times=True, chunks={"time": 50})
+    return ds
+
+def load_imerg_from_HF(subdir="SouthAfrica_Limpopo", token=None, batch_size=20):
     repo_id = "musamthembu84/imerg"
-    #SouthAfrica_Limpopo/3B-DAY-L.MS.MRG.3IMERG.20250331-S000000-E235959.V07B_SouthAfrica_Limpopo.nc4
     pattern = f"hf://datasets/{repo_id}/{subdir}/*.nc4"
-    files = fsspec.open_files(pattern, mode="rb",token=token)
+    files = fsspec.open_files(pattern, mode="rb", token=token)
 
-
-    # Helper to split files into batches
-    def _batch_iterable(iterable, size):
-        it = iter(iterable)
-        while batch := list(islice(it, size)):
-            yield batch
-
-    batch_size = 20
     datasets = []
 
     for batch_files in _batch_iterable(files, batch_size):
-        file_objs = []
+        ds_list = []
+
         for f in batch_files:
-            try:
-                file_objs.append(f.open())
-                time.sleep(0.2)  # <-- gentle delay to reduce HF rate-limit
-            except Exception as e:
-                print(f"Failed to open {f}: {e}, retrying after 1s")
-                time.sleep(1)
-                file_objs.append(f.open())
+            f_obj = f.open()
+            time.sleep(0.1)  # gentle delay
+            ds = _open_with_fallback(f_obj)
+            ds_list.append(ds["precipitation"])
 
-        # Lazy-load with dask, combine by coords
-        ds_batch = xr.open_mfdataset(
-            file_objs,
-            engine="scipy",
-            combine="by_coords",
-            parallel=True,
-            chunks={"time": 50},  # small chunks keeps memory usage low
-        )
-        datasets.append(ds_batch["precipitation"])
-        print(f"Processed batch of {len(batch_files)} files, total batches: {len(datasets)}")
+        ds_batch = xr.concat(ds_list, dim="time")
+        datasets.append(ds_batch)
 
-    # Concatenate all batches along time
     ds = xr.concat(datasets, dim="time")
-
     return ds
